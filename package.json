@@ -6,11 +6,17 @@
   "license": "UNLICENSED",
   "private": true,
   "dependencies": {
+    "@remotion/bundler": "^4.0.501",
+    "@remotion/captions": "^4.0.501",
     "@remotion/cli": "4.0.501",
     "@remotion/google-fonts": "^4.0.501",
+    "@remotion/install-whisper-cpp": "^4.0.501",
     "@remotion/media": "^4.0.501",
+    "@remotion/renderer": "^4.0.501",
     "@remotion/tailwind-v4": "4.0.501",
     "@remotion/transitions": "^4.0.501",
+    "dotenv": "^17.4.2",
+    "grammy": "^1.45.1",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "remotion": "4.0.501",
@@ -18,17 +24,23 @@
   },
   "devDependencies": {
     "@remotion/eslint-config-flat": "4.0.501",
+    "@types/node": "^26.1.2",
     "@types/react": "19.2.7",
     "@types/web": "0.0.166",
     "eslint": "9.19.0",
     "prettier": "3.8.1",
+    "tsx": "^4.23.1",
     "typescript": "5.9.3"
   },
   "scripts": {
     "dev": "remotion studio",
     "build": "remotion bundle",
     "upgrade": "remotion upgrade",
-    "lint": "eslint src && tsc"
+    "bot": "tsx bot/index.ts",
+    "bot:dev": "tsx watch bot/index.ts",
+    "start": "tsx bot/index.ts",
+    "typecheck": "tsc && tsc -p tsconfig.bot.json",
+    "lint": "eslint src && npm run typecheck"
   },
   "sideEffects": [
     "*.css"

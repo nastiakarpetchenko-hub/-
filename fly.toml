@@ -1,0 +1,23 @@
+# Конфиг деплоя на Fly.io. Замени app на своё имя (flyctl launch создаст сам).
+app = "tg-subtitle-bot"
+primary_region = "fra"
+
+[build]
+  dockerfile = "Dockerfile"
+
+# Бот на long polling — публичный http-сервис не нужен, секции [http_service] нет.
+
+[env]
+  SUBTITLE_ENGINE = "whisper-cpp"
+  WHISPER_MODEL = "medium"
+  WHISPER_LANG = "ru"
+
+# Ресурсы: Whisper medium требует памяти. Меньше 2 ГБ не ставь.
+[[vm]]
+  size = "shared-cpu-2x"
+  memory = "4gb"
+
+# Постоянный том, чтобы модель Whisper не скачивалась каждый рестарт.
+[mounts]
+  source = "botdata"
+  destination = "/app/.whisper"

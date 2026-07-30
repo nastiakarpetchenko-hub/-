@@ -1,0 +1,8 @@
+node_modules
+.work
+.whisper
+.git
+out
+dist
+*.log
+.env

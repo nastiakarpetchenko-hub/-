@@ -1,0 +1,20 @@
+# Blueprint для Render.com. Подключи репозиторий → Render прочитает этот файл.
+services:
+  - type: worker # фоновый воркер (не web) — боту не нужен входящий порт
+    name: tg-subtitle-bot
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: standard # Whisper medium требует памяти; free-плана не хватит
+    envVars:
+      - key: BOT_TOKEN
+        sync: false # задаёшь секретом в дашборде Render
+      - key: SUBTITLE_ENGINE
+        value: whisper-cpp
+      - key: WHISPER_MODEL
+        value: medium
+      - key: WHISPER_LANG
+        value: ru
+    disk:
+      name: whisper-cache
+      mountPath: /app/.whisper
+      sizeGB: 5
