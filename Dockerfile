@@ -12,8 +12,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 WORKDIR /app
 
 # Ставим зависимости (кэшируется, пока не менялся package-lock).
+# --include=dev обязателен: бот запускается через tsx (он в devDependencies),
+# а Railway/PaaS выставляют NODE_ENV=production и иначе tsx не установится.
 COPY package*.json ./
-RUN npm ci
+RUN npm ci --include=dev
 
 # Копируем исходники.
 COPY . .
