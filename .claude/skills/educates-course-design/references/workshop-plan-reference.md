@@ -1,0 +1,225 @@
+# Workshop Plan Reference
+
+A per-workshop plan (`planning/workshop-plans/lab-*.md`) is a detailed implementation blueprint for a single Educates workshop. It contains everything needed to create the actual workshop files using the educates-workshop-authoring skill.
+
+**Important:** Writing a good plan requires knowledge of Educates workshop authoring — the available clickable action types, YAML configuration options, page structure conventions, and exercise file layout. Before writing plans, ensure the educates-workshop-authoring skill has been invoked to load this knowledge (see Step 4 in the main skill document). The goal is implementation-ready plans, not plans that need to be reworked during authoring.
+
+## File Naming
+
+Plan files are named to match the workshop directory name with a `.md` extension:
+
+- Workshop directory: `workshops/lab-a01-first-decorator/`
+- Plan file: `planning/workshop-plans/lab-a01-first-decorator.md`
+
+## Standard Structure
+
+Every plan file follows the same 8-section structure. All sections are required, though some adapt based on the course scope and the workshop's position in the course (see notes on individual sections below).
+
+### 1. Workshop Metadata
+
+Basic identification and classification:
+
+```markdown
+## Workshop Metadata
+
+- **Name:** lab-a01-workshop-name
+- **Title:** Human-Readable Workshop Title
+- **Description:** One to two sentence description of what the workshop covers.
+- **Duration:** 15m / 30m / 45m / 1h (estimated completion time, must be a single value not a range)
+- **Difficulty:** beginner / intermediate / advanced
+- **Type:** core / elective / standalone
+- **Prerequisites:** Workshop A01: Title (or "None" for the first workshop)
+- **Status:** Needs moderate fixup — [tasks](../tasks.md#workshop-a01-workshop-title)
+```
+
+The **name** uses the format `lab-{code}-{descriptive-name}` (e.g., `lab-a01-first-decorator`), where the code is the module letter and a two-digit zero-padded workshop number. It matches the directory name and the `metadata.name` in the workshop's `resources/workshop.yaml`.
+
+The **Duration** must be a single fixed value (e.g., `30m`), never a range (e.g., `20-25m`). This value maps directly into the Workshop definition and TrainingPortal definition, which require an exact duration.
+
+The **Difficulty** must be a single value — exactly one of `beginner`, `intermediate`, or `advanced`. Never use a range or combination (e.g., not `beginner-intermediate`). This value maps directly into the Workshop definition, which uses an enum and will only accept one of these three exact values. When the workshop's content could reasonably span two difficulty levels, use the higher (more difficult) level.
+
+For courses that do not use the core/elective model, omit the **Type** field or use "standalone."
+
+The **Status** line links to the workshop's section in `tasks.md` using a relative path (`../tasks.md` since plans are in the `workshop-plans/` subdirectory). Add this line once `tasks.md` exists and tasks have been recorded for the workshop. If the workshop has no outstanding tasks, omit the Status line or set it to "Complete."
+
+### 2. Workshop Configuration
+
+What session applications and setup the workshop needs:
+
+```markdown
+## Workshop Configuration
+
+- **Terminal:** Enabled (split layout)
+- **Editor:** Enabled
+- **Other applications:** None required
+```
+
+Most workshops need only the terminal and editor. Note any special requirements (e.g., a web application dashboard, extra tools to install via setup scripts, environment variables to set via a profile).
+
+### 3. Learning Objectives
+
+What the learner will be able to do after completing the workshop:
+
+```markdown
+## Learning Objectives
+
+After completing this workshop, the learner will be able to:
+
+- Objective 1 (action verb: write, apply, identify, explain, etc.)
+- Objective 2
+- Objective 3
+```
+
+These are copied from the workshop breakdown file (the source of truth). They may be refined in wording but should stay aligned in substance.
+
+### 4. Connection to Previous Workshop
+
+This section is substantive for any workshop that has a predecessor in a sequential chain (core workshops, or any workshop in a linear course that follows another). For **standalone workshops or the first workshop in a course**, this section can be omitted or replaced with a brief "Assumed Knowledge" note listing what background the learner is expected to have.
+
+For **workshops with a predecessor**, explicitly state what the learner already knows and what is new:
+
+```markdown
+## Connection to Previous Workshop
+
+**What the learner already knows** (from Workshop A01: Title):
+- Concept A — can be referenced briefly but not re-taught
+- Concept B — the learner has used this in exercises
+
+**What is new in this workshop:**
+- Concept C — introduced for the first time
+- Concept D — builds on Concept A but goes further
+
+**What should NOT be re-taught:**
+- Do not re-explain Concept A; reference it as established knowledge
+- Do not repeat the X exercise pattern from the previous workshop
+```
+
+This section prevents unnecessary overlap between sequential workshops. It forces the plan author to be explicit about what is assumed knowledge versus new material.
+
+For **elective workshops**, this section is briefer — state which core prerequisites are assumed and what specific concepts from them are relevant.
+
+### 5. Exercise Files to Create
+
+Every file that should exist under `exercises/` when the workshop session starts:
+
+```markdown
+## Exercise Files to Create
+
+### exercises/README.md
+Placeholder file to ensure the exercises directory exists. Contains a brief
+note such as "Exercise files for the [Workshop Title] workshop."
+
+### exercises/example.py
+**Purpose:** Starting point for the main exercise.
+**Initial contents:** A Python module containing [description of what the file
+contains before any clickable actions modify it].
+
+### exercises/helpers.py
+**Purpose:** Supporting functions used across multiple exercises.
+**Initial contents:** [Description of initial contents].
+```
+
+For each file, describe:
+- The filename and path under `exercises/`
+- Its purpose (which exercises use it, what role it plays)
+- What the file contains when the session starts (before any clickable actions modify it)
+
+The `exercises/README.md` placeholder is always required (the directory must contain at least one file to be preserved in publishing).
+
+### 6. Workshop Instruction Pages
+
+A page-by-page breakdown of the workshop content:
+
+```markdown
+## Workshop Instruction Pages
+
+### 00-workshop-overview.md
+**Purpose:** Introduce the workshop and set context.
+
+**Content outline:**
+- Connect to prior workshop(s): reference what the learner already knows about
+  [concept] from [previous workshop].
+- Introduce the problem or question this workshop addresses.
+- State the learning objectives.
+- Open the main exercise file (`editor:open-file`).
+
+### 01-first-topic.md
+**Purpose:** [One sentence describing the page's purpose.]
+
+**Content outline:**
+- Explain [concept] with a brief introduction.
+- Open [file] and highlight [section] (`editor:open-file`, then
+  `editor:select-matching-text`).
+- Run the code to demonstrate the current behaviour (`terminal:execute`).
+- Discuss the output and what it shows about [concept].
+
+### 02-second-topic.md
+...
+
+### 99-workshop-summary.md
+**Purpose:** Recap and bridge forward.
+
+**Content outline:**
+- Summarise the key concepts covered: [list].
+- If a next workshop is planned: note what was deliberately left unaddressed
+  (to create motivation for the next workshop) and bridge to it by name
+  and topic.
+- For elective workshops: suggest related workshops the learner might try next.
+- For standalone or final workshops: summarise what was learned and suggest
+  what the learner could explore next or what future workshops might cover.
+```
+
+For each page, specify:
+- The filename with numeric prefix
+- A one-sentence purpose
+- A content outline describing the narrative flow
+- Specific clickable action types to use, noted inline (e.g., `editor:open-file`, `terminal:execute`, `editor:replace-matching-text`)
+
+Pages `00` (overview) and `99` (summary) are always present. Core content pages start at `01` and increment.
+
+### 7. Terminal Working Directory Tracking
+
+Document the terminal state throughout the workshop:
+
+```markdown
+## Terminal Working Directory Tracking
+
+**Starting directory:** `~/exercises` (exercises directory exists)
+
+**Directory changes:**
+- No `cd` commands in this workshop; all commands run from `~/exercises`.
+
+**Terminal command patterns:**
+- `python filename.py` for running complete scripts
+- `python -c "..."` for quick inline demonstrations
+```
+
+Track:
+- The starting directory (`~/exercises` when the exercises directory exists)
+- Any `cd` commands that change the working directory
+- Typical command patterns used in the workshop
+
+This ensures that when the actual workshop instructions are written, all file paths are correct relative to the current working directory at each point.
+
+### 8. Design Notes
+
+Design decisions, rationale, and forward-looking notes:
+
+```markdown
+## Design Notes
+
+- This workshop covers Topics N and M from course-topics.md. Topic N provides
+  the conceptual foundation; Topic M provides the hands-on application.
+- [Design decision]: We chose to [approach] because [reason].
+- [Deliberate limitation]: The learner will notice that [limitation]. This is
+  intentionally left unresolved — Workshop A03 addresses it.
+- [Future setup]: The [pattern/concept] introduced here is used again in
+  Workshop A04, so it needs to be memorable.
+```
+
+Record:
+- Which topics from the topics document this workshop covers
+- Why specific design decisions were made
+- Limitations deliberately introduced that future workshops will resolve (if future workshops are planned)
+- Concepts that future workshops will build on (so they are introduced clearly)
+- For focused courses: expansion ideas — what future workshops could build on the patterns established here
