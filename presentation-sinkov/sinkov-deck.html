@@ -1,0 +1,300 @@
+<title>Реализованные объекты SINKOV</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700&family=Onest:wght@400;500;700;800&display=swap">
+<style>
+  :root{
+    --ink:#0B140E; --green-deep:#1F3D27; --green:#2E5B3A; --lime:#C7DD7F;
+    --white:#FFFFFF; --muted:rgba(255,255,255,.68); --faint:rgba(255,255,255,.40);
+    --line:rgba(255,255,255,.14);
+    --display:"Onest",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    --body:"Manrope","Onest",-apple-system,BlinkMacSystemFont,sans-serif;
+    --gut:clamp(20px,5vw,80px); --tile:12px;
+  }
+  *{box-sizing:border-box}
+  body{background:var(--ink);color:var(--white);font-family:var(--body);margin:0;-webkit-font-smoothing:antialiased}
+  img{max-width:100%}
+  h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;letter-spacing:-.01em;text-transform:uppercase}
+  .label{font-family:var(--body);font-size:12px;font-weight:500;color:var(--faint);letter-spacing:.02em;margin:0}
+
+  .draft{background:var(--green-deep);border-bottom:1px solid var(--line);padding:12px var(--gut);
+    font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);font-weight:500;line-height:1.6}
+  .draft b{color:var(--lime);font-weight:700}
+
+  .mark{display:flex;align-items:center;gap:13px}
+  .mark__logo{display:block;flex:none;width:52px;height:52px;border-radius:9999px}
+  .mark__word{font-family:var(--display);font-weight:800;font-size:18px;letter-spacing:.22em;line-height:1}
+  .mark__tag{font-family:var(--body);font-size:10px;letter-spacing:.15em;color:var(--faint);text-transform:uppercase;margin-top:5px}
+
+  /* слот под фотографию */
+  .ph{position:relative;border-radius:var(--tile);overflow:hidden;display:grid;place-items:center;padding:10px;
+    background:radial-gradient(120% 90% at 70% 15%,rgba(46,91,58,.5) 0%,rgba(11,20,14,0) 62%),
+               linear-gradient(200deg,#24402C 0%,#16261B 46%,#0B140E 100%)}
+  .ph::after{content:"";position:absolute;inset:0;opacity:.28;pointer-events:none;
+    background-image:repeating-linear-gradient(115deg,rgba(255,255,255,.07) 0 1px,transparent 1px 24px)}
+  .ph__tag{position:relative;max-width:88%;text-align:center;font-family:var(--body);font-size:10.5px;line-height:1.5;
+    letter-spacing:.04em;color:var(--muted);border:1px solid var(--line);border-radius:12px;padding:8px 12px;background:rgba(11,20,14,.5)}
+  .ph__tag b{display:block;color:var(--lime);font-weight:700;letter-spacing:.08em;margin-bottom:3px;text-transform:uppercase}
+  .ph--flat{border-radius:0}
+  /* как только внутрь слота кладут <img>, заглушка сама исчезает */
+  .ph > img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+  .ph:has(img){padding:0}
+  .ph:has(img)::after{content:none}
+  .ph:has(img) .ph__tag{display:none}
+
+  /* врезка «было» */
+  .inset{position:absolute;right:14px;bottom:14px;width:min(30%,240px);aspect-ratio:16/9;z-index:2;
+    border-radius:8px;overflow:hidden;border:2px solid rgba(11,20,14,.75);box-shadow:0 6px 26px rgba(0,0,0,.42)}
+  .inset .ph{width:100%;height:100%;border-radius:0;padding:6px}
+  .inset .ph__tag{font-size:9px;padding:5px 8px;border-radius:8px}
+  .inset__cap{position:absolute;left:0;top:0;z-index:3;background:var(--lime);color:#1A1A1A;
+    font-family:var(--display);font-weight:700;font-size:9px;letter-spacing:.14em;text-transform:uppercase;padding:4px 9px}
+
+  /* ряд фотографий: ширина каждой пропорциональна её соотношению сторон */
+  .row{display:flex;gap:var(--tile);width:100%}
+  .row + .row{margin-top:var(--tile)}
+  .row > *{flex:var(--ar) 1 0;min-width:0}
+
+  /* ОБЛОЖКА */
+  .cover{display:grid;grid-template-columns:1.05fr .95fr;min-height:640px}
+  .cover__left{position:relative;overflow:hidden;padding:var(--gut);gap:44px;display:flex;flex-direction:column;justify-content:space-between;
+    background:linear-gradient(160deg,var(--green-deep) 0%,var(--ink) 72%)}
+  .cover__left canvas{position:absolute;inset:0;width:100%;height:100%;opacity:.5}
+  .cover__left > *{position:relative}
+  .cover h1{font-size:clamp(34px,4.4vw,60px);font-weight:800;line-height:1.04;margin-top:14px}
+  .cover__sub{font-size:clamp(15px,1.3vw,17px);color:var(--muted);line-height:1.55;max-width:40ch;margin:20px 0 0}
+  .cover__foot{display:flex;flex-wrap:wrap;gap:10px 26px;font-size:12px;color:var(--faint);letter-spacing:.06em;text-transform:uppercase}
+  .cover__right{position:relative;min-height:320px;display:grid}
+
+  /* О КОМПАНИИ */
+  .about{padding:clamp(60px,8vw,110px) var(--gut);border-top:1px solid var(--line)}
+  .about h2{font-size:clamp(26px,3.2vw,42px);font-weight:700;line-height:1.1;margin:16px 0 0}
+  .cols{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(20px,3vw,44px);margin-top:clamp(36px,5vw,60px)}
+  .col{padding-left:clamp(16px,2vw,28px);border-left:1px solid var(--line)}
+  .col h3{font-size:clamp(15px,1.4vw,18px);font-weight:700;color:var(--lime);line-height:1.25}
+  .col p{font-family:var(--body);font-size:14px;line-height:1.55;color:var(--muted);margin:12px 0 0}
+  .figures{margin-top:clamp(56px,7vw,96px);padding-top:clamp(32px,4vw,48px);border-top:1px solid var(--line)}
+  .figures h2{font-size:clamp(22px,2.6vw,34px)}
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(20px,3vw,44px);margin-top:clamp(28px,4vw,48px)}
+  .stat{padding-left:clamp(16px,2vw,28px);border-left:1px solid var(--line)}
+  .stat__n{font-family:var(--display);font-weight:800;font-size:clamp(38px,5vw,64px);line-height:1;color:var(--lime);font-variant-numeric:tabular-nums}
+  .stat__c{font-family:var(--body);font-size:13px;line-height:1.5;color:var(--muted);margin-top:12px;max-width:28ch}
+
+  /* ОБЪЕКТЫ */
+  .obj{padding:clamp(48px,6vw,86px) var(--gut);border-top:1px solid var(--line)}
+  .obj__head{display:flex;justify-content:space-between;align-items:baseline;gap:20px;flex-wrap:wrap;margin-bottom:clamp(22px,3vw,34px)}
+  .obj h2{font-size:clamp(20px,2.6vw,34px);font-weight:700;line-height:1.15}
+  .obj h2 span{color:var(--faint);font-weight:500}
+  .obj__idx{font-family:var(--display);font-weight:700;font-size:12px;letter-spacing:.14em;color:var(--faint);font-variant-numeric:tabular-nums;white-space:nowrap}
+
+  /* КОНТАКТЫ */
+  .end{display:grid;grid-template-columns:1.05fr .95fr;border-top:1px solid var(--line);min-height:540px}
+  .end__left{position:relative;overflow:hidden;padding:var(--gut);display:flex;flex-direction:column;justify-content:center;gap:22px;
+    background:linear-gradient(160deg,var(--ink) 0%,var(--green-deep) 100%)}
+  .end__left canvas{position:absolute;inset:0;width:100%;height:100%;opacity:.45}
+  .end__left > *{position:relative}
+  .end h2{font-size:clamp(30px,3.8vw,52px);font-weight:800;line-height:1.05}
+  .end__right{background:var(--green);padding:var(--gut);display:flex;flex-direction:column;justify-content:center;gap:30px}
+  .contact{display:flex;align-items:center;gap:14px;text-decoration:none;color:var(--white);font-size:clamp(17px,1.6vw,21px);font-weight:500;font-family:var(--body)}
+  .contact + .contact{margin-top:18px}
+  .contact:hover{color:var(--lime)}
+  .contact__ic{flex:none;display:grid;place-items:center;width:40px;height:40px;border-radius:9999px;border:1px solid rgba(255,255,255,.28)}
+  .contact:hover .contact__ic{border-color:var(--lime)}
+  .btn{display:inline-flex;align-items:center;gap:12px;align-self:flex-start;background:var(--lime);color:#1A1A1A;
+    font-family:var(--display);font-weight:700;font-size:14px;letter-spacing:.02em;text-transform:uppercase;
+    padding:14px 14px 14px 28px;border-radius:9999px;text-decoration:none;transition:transform .2s ease}
+  .btn:hover{transform:translateY(-1px)}
+  .btn__ar{display:inline-grid;place-items:center;width:32px;height:32px;border-radius:9999px;background:#1A1A1A;color:var(--lime);font-size:14px}
+  a:focus-visible{outline:2px solid var(--lime);outline-offset:3px}
+
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.7,.3,1)}
+  .reveal.in{opacity:1;transform:none}
+
+  @media (max-width:900px){
+    .cover,.end{grid-template-columns:1fr}
+    .cover{min-height:0} .cover__right{min-height:280px}
+    .cols,.stats{grid-template-columns:1fr;gap:22px}
+    .row{flex-wrap:wrap;aspect-ratio:auto !important}
+    .row > *{flex:1 1 100%;aspect-ratio:var(--ar)}
+    .inset{width:38%}
+  }
+  @media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}.btn:hover{transform:none}}
+</style>
+
+<p class="draft">Пробная версия · названия объектов и раскладка кадров — настоящие, <b>вместо фотографий — слоты с именами файлов</b> · финальную подстановку делает Cowork на Mac</p>
+
+<section class="cover">
+  <div class="cover__left">
+    <canvas data-contours aria-hidden="true"></canvas>
+    <div class="mark">
+      <img class="mark__logo" src="logo.png" alt="" width="52" height="52">
+      <div><div class="mark__word">SINKOV</div><div class="mark__tag">Ландшафтная архитектура</div></div>
+    </div>
+    <div>
+      <p class="label">[ реализованные объекты ]</p>
+      <h1>Премиальная<br>ландшафтная<br>архитектура</h1>
+      <p class="cover__sub">Проектирование, реализация и авторский надзор полного цикла. Единый стандарт качества на объектах по всей России.</p>
+    </div>
+    <div class="cover__foot"><span>Москва / 2026</span><span>sinkoveco.ru</span></div>
+  </div>
+  <div class="cover__right">
+    <div class="ph ph--flat"><span class="ph__tag"><b>04-fedotovka-chernomorskaya / 01.jpg</b>Белый гравий, плиты по оси, шары самшита, работающая подсветка на закате</span></div>
+  </div>
+</section>
+
+<section class="about">
+  <p class="label">[ о компании ]</p>
+  <h2>Что такое SINKOV?</h2>
+  <div class="cols">
+    <div class="col"><h3>Проектирование</h3><p>Генплан, дендроплан, рабочая документация и инженерные разделы. Сад закладывается на бумаге до первого выхода техники.</p></div>
+    <div class="col"><h3>Реализация</h3><p>Собственные бригады и техника. Рельеф, дренаж, вода, свет и посадки выполняются по единому стандарту качества.</p></div>
+    <div class="col"><h3>Авторский надзор</h3><p>Ведём объект от первой разметки до сдачи и сопровождаем сад в первые сезоны, когда он набирает форму.</p></div>
+  </div>
+  <div class="figures">
+    <h2>SINKOV в цифрах</h2>
+    <div class="stats">
+      <div class="stat"><div class="stat__n">12+</div><div class="stat__c">лет в ландшафтной архитектуре — от частных резиденций до общественных территорий</div></div>
+      <div class="stat"><div class="stat__n">370+</div><div class="stat__c">реализованных проектов, каждый с авторским надзором до сдачи</div></div>
+      <div class="stat"><div class="stat__n">10</div><div class="stat__c">городов присутствия и единый стандарт качества по всей России</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 01 АБРАУ-ДЮРСО -->
+<section class="obj">
+  <div class="obj__head">
+    <h2><span>SINKOV /</span> Абрау-Дюрсо, «Лазурная»</h2>
+    <span class="obj__idx">01 / 05</span>
+  </div>
+  <div class="row" style="aspect-ratio:1.78">
+    <div class="ph" style="--ar:1.78"><span class="ph__tag"><b>01-abrau-lazurnaya / 01.jpg</b>Фронтальный кадр: лестница строго по оси, белые подпорные стены расходятся симметрично</span></div>
+  </div>
+  <div class="row" style="aspect-ratio:7.12">
+    <div class="ph" style="--ar:1.78"><span class="ph__tag"><b>02.jpg</b>Терраса, вид на долину</span></div>
+    <div class="ph" style="--ar:1.78"><span class="ph__tag"><b>03.jpg</b>Лестница вдоль дома</span></div>
+    <div class="ph" style="--ar:1.78"><span class="ph__tag"><b>04.jpg</b>Общий вид со двора</span></div>
+    <div class="ph" style="--ar:1.78"><span class="ph__tag"><b>05.jpg</b>Каменистый сад у окон</span></div>
+  </div>
+</section>
+
+<!-- 02 СТАДИОН ТРУД -->
+<section class="obj">
+  <div class="obj__head">
+    <h2><span>SINKOV /</span> Стадион «Труд»</h2>
+    <span class="obj__idx">02 / 05</span>
+  </div>
+  <div class="row" style="aspect-ratio:2.3425">
+    <div class="ph" style="--ar:1.78"><span class="ph__tag"><b>02-trud-stadium / 04.jpg</b>Панорама чаши: уложенный газон под работающим поливом</span></div>
+    <div class="ph" style="--ar:0.5625"><span class="ph__tag"><b>02.jpg</b>Беговые дорожки, вертикаль</span></div>
+  </div>
+  <div class="row" style="aspect-ratio:3.56">
+    <div class="ph" style="--ar:1.78"><span class="ph__tag"><b>01.jpg</b>Подготовка основания: снятый грунт, техника, материалы</span></div>
+    <div class="ph" style="--ar:1.78"><span class="ph__tag"><b>03.jpg</b>Трибуна на закате, готовое поле</span></div>
+  </div>
+</section>
+
+<!-- 03 ВИТЯЗЕВО -->
+<section class="obj">
+  <div class="obj__head">
+    <h2><span>SINKOV /</span> Витязево, «Уютная 2г»</h2>
+    <span class="obj__idx">03 / 05</span>
+  </div>
+  <div class="row" style="aspect-ratio:2.905">
+    <div class="ph" style="--ar:1.78">
+      <span class="ph__tag"><b>03-vityazevo-uyutnaya-2g / 01.jpg</b>Общий вид: терраса, обеденная группа, олива в гравийной отсыпке</span>
+      <div class="inset">
+        <span class="inset__cap">было</span>
+        <div class="ph"><span class="ph__tag"><b>04.jpg</b>Голая отсыпка, доски террасы штабелем</span></div>
+      </div>
+    </div>
+    <div class="ph" style="--ar:0.5625"><span class="ph__tag"><b>02.jpg</b>Олива и камень крупно</span></div>
+    <div class="ph" style="--ar:0.5625"><span class="ph__tag"><b>03.jpg</b>Вид с террасы на газон</span></div>
+  </div>
+</section>
+
+<!-- 04 ФЕДОТОВКА -->
+<section class="obj">
+  <div class="obj__head">
+    <h2><span>SINKOV /</span> Федотовка, «Черноморская»</h2>
+    <span class="obj__idx">04 / 05</span>
+  </div>
+  <div class="row" style="aspect-ratio:2.3425">
+    <div class="ph" style="--ar:1.78"><span class="ph__tag"><b>04-fedotovka-chernomorskaya / 02.jpg</b>Общий вид: подпорные стенки, туи шарами, травертин</span></div>
+    <div class="ph" style="--ar:0.5625"><span class="ph__tag"><b>03.jpg</b>Дорожка к перголе, злаки</span></div>
+  </div>
+</section>
+
+<!-- 05 РАЕВКА -->
+<section class="obj">
+  <div class="obj__head">
+    <h2><span>SINKOV /</span> Раевка, «Ленина 60»</h2>
+    <span class="obj__idx">05 / 05</span>
+  </div>
+  <div class="row" style="aspect-ratio:2.905">
+    <div class="ph" style="--ar:0.5625"><span class="ph__tag"><b>05-raevka-lenina-60 / 05.jpg</b>Фасад с ниваки, вертикаль</span></div>
+    <div class="ph" style="--ar:1.78"><span class="ph__tag"><b>01.jpg</b>Подвесные кресла, ниваки у входа, газон с плитами-степами</span></div>
+    <div class="ph" style="--ar:0.5625"><span class="ph__tag"><b>02.jpg</b>Угол двора, высокое небо</span></div>
+  </div>
+  <div class="row" style="aspect-ratio:2.3425">
+    <div class="ph" style="--ar:1.78"><span class="ph__tag"><b>03.jpg</b>Лавры в плетёных кашпо, шары самшита, отсыпка</span></div>
+    <div class="ph" style="--ar:0.5625"><span class="ph__tag"><b>04.jpg</b>Газон и мощение, вертикаль</span></div>
+  </div>
+</section>
+
+<section class="end">
+  <div class="end__left">
+    <canvas data-contours aria-hidden="true"></canvas>
+    <p class="label">[ контакты ]</p>
+    <h2>Обсудим<br>ваш проект</h2>
+    <a class="btn" href="https://sinkoveco.ru">Оставить заявку <span class="btn__ar" aria-hidden="true">↗</span></a>
+  </div>
+  <div class="end__right">
+    <div class="mark">
+      <img class="mark__logo" src="logo.png" alt="" width="52" height="52">
+      <div><div class="mark__word">SINKOV</div><div class="mark__tag">Ландшафтная архитектура</div></div>
+    </div>
+    <div>
+      <a class="contact" href="tel:88006002393"><span class="contact__ic" aria-hidden="true">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.5 2.8.6a2 2 0 0 1 1.7 2Z"/></svg>
+      </span>8 800 600-23-93</a>
+      <a class="contact" href="https://sinkoveco.ru"><span class="contact__ic" aria-hidden="true">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 0 20 15.3 15.3 0 0 1 0-20Z"/></svg>
+      </span>sinkoveco.ru</a>
+    </div>
+  </div>
+</section>
+
+<script>
+(function(){
+  function draw(cv){
+    var r=Math.min(window.devicePixelRatio||1,2), w=cv.clientWidth, h=cv.clientHeight;
+    if(!w||!h) return;
+    cv.width=w*r; cv.height=h*r;
+    var c=cv.getContext('2d'); c.scale(r,r); c.clearRect(0,0,w,h); c.lineWidth=1;
+    for(var i=0;i<26;i++){
+      var t=i/25, base=h*0.08+t*h*0.95;
+      c.beginPath();
+      for(var x=0;x<=w;x+=6){
+        var p=x/w;
+        var y=base+Math.sin(p*3.1+i*0.42)*(16+i*1.5)+Math.sin(p*7.3-i*0.27)*7;
+        x===0?c.moveTo(x,y):c.lineTo(x,y);
+      }
+      c.strokeStyle='rgba(199,221,127,'+(0.05+0.11*Math.sin(t*Math.PI))+')';
+      c.stroke();
+    }
+  }
+  var cvs=document.querySelectorAll('canvas[data-contours]');
+  function all(){ cvs.forEach(draw); }
+  all();
+  window.addEventListener('resize',function(){clearTimeout(window.__ct);window.__ct=setTimeout(all,180)});
+
+  if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){
+      es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+    },{rootMargin:'0px 0px -12% 0px'});
+    document.querySelectorAll('.about > *, .obj__head, .row, .end__left > *, .end__right > *').forEach(function(el){
+      if(el.getBoundingClientRect().top > window.innerHeight){ el.classList.add('reveal'); io.observe(el); }
+    });
+  }
+})();
+</script>
