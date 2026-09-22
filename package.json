@@ -20,7 +20,8 @@
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "remotion": "4.0.501",
-    "tailwindcss": "4.0.0"
+    "tailwindcss": "4.0.0",
+    "yaml": "^2.9.1"
   },
   "devDependencies": {
     "@remotion/eslint-config-flat": "4.0.501",
@@ -40,7 +41,13 @@
     "bot:dev": "tsx watch bot/index.ts",
     "start": "tsx bot/index.ts",
     "typecheck": "tsc && tsc -p tsconfig.bot.json",
-    "lint": "eslint src && npm run typecheck"
+    "lint": "eslint src && npm run typecheck",
+    "publish:check": "tsx publish/index.ts check",
+    "publish:run": "tsx publish/index.ts run",
+    "publish:status": "tsx publish/index.ts status",
+    "publish:scheduler": "tsx publish/index.ts scheduler",
+    "publish:test": "tsx publish/selftest.ts",
+    "publish:cli": "tsx publish/index.ts"
   },
   "sideEffects": [
     "*.css"

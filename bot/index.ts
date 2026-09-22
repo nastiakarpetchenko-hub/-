@@ -35,7 +35,7 @@ bot.command("start", (ctx) =>
 bot.on([":video", ":document"], async (ctx) => {
   const doc = ctx.message?.video ?? ctx.message?.document;
   if (!doc) return;
-  const mime = "mime_type" in doc ? doc.mime_type ?? "" : "video/mp4";
+  const mime = "mime_type" in doc ? (doc.mime_type ?? "") : "video/mp4";
   if (!mime.startsWith("video/")) {
     return ctx.reply("Это не похоже на видео 🤔 Пришли видеофайл.");
   }
@@ -48,7 +48,11 @@ bot.on([":video", ":document"], async (ctx) => {
 
   const setStage = async (s: Stage) => {
     try {
-      await ctx.api.editMessageText(ctx.chat.id, status.message_id, STAGE_TEXT[s]);
+      await ctx.api.editMessageText(
+        ctx.chat.id,
+        status.message_id,
+        STAGE_TEXT[s],
+      );
     } catch {
       /* игнорируем "message is not modified" */
     }
@@ -60,7 +64,10 @@ bot.on([":video", ":document"], async (ctx) => {
     const url = `https://api.telegram.org/file/bot${config.botToken}/${file.file_path}`;
     const res = await fetch(url);
     if (!res.ok || !res.body) throw new Error(`download ${res.status}`);
-    await streamPipeline(Readable.fromWeb(res.body), fs.createWriteStream(videoPath));
+    await streamPipeline(
+      Readable.fromWeb(res.body),
+      fs.createWriteStream(videoPath),
+    );
     log.ok(`Скачано: ${videoPath}`);
 
     // Прогоняем через пайплайн.
@@ -83,6 +90,14 @@ bot.catch((err) => log.err("Bot error:", err.error));
 
 async function main() {
   await fsp.mkdir(config.workDir, { recursive: true });
+
+  // Планировщик автопубликации можно держать в этом же процессе —
+  // тогда одного деплоя хватает и на монтаж роликов, и на выкладку.
+  if (process.env.PUBLISH_SCHEDULER_IN_BOT === "true") {
+    const { startScheduler } = await import("../publish/scheduler");
+    void startScheduler();
+  }
+
   log.info("Запускаю бота (long polling)…");
   await bot.start({
     onStart: (me) => log.ok(`Бот @${me.username} на связи`),

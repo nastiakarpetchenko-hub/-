@@ -11,13 +11,21 @@ primary_region = "fra"
   SUBTITLE_ENGINE = "whisper-cpp"
   WHISPER_MODEL = "medium"
   WHISPER_LANG = "ru"
+  # Всё, что должно пережить передеплой, — на постоянный том.
+  WHISPER_DIR = "/app/data/whisper"
+  CONTENT_DIR = "/app/data/content"
+  STATE_FILE = "/app/data/content/.state.json"
+  # Планировщик автопубликации поднимается вместе с ботом.
+  PUBLISH_SCHEDULER_IN_BOT = "true"
+  TIMEZONE = "Europe/Moscow"
 
 # Ресурсы: Whisper medium требует памяти. Меньше 2 ГБ не ставь.
 [[vm]]
   size = "shared-cpu-2x"
   memory = "4gb"
 
-# Постоянный том, чтобы модель Whisper не скачивалась каждый рестарт.
+# Постоянный том: модель Whisper, контент-план и журнал публикаций.
+# Журнал обязан жить здесь — иначе после передеплоя посты уйдут повторно.
 [mounts]
   source = "botdata"
-  destination = "/app/.whisper"
+  destination = "/app/data"

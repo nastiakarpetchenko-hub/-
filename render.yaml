@@ -1,6 +1,6 @@
 # Blueprint для Render.com. Подключи репозиторий → Render прочитает этот файл.
 services:
-  - type: worker # фоновый воркер (не web) — боту не нужен входящий порт
+  - type: worker # фоновый воркер: боту и планировщику входящий порт не нужен
     name: tg-subtitle-bot
     runtime: docker
     dockerfilePath: ./Dockerfile
@@ -14,7 +14,41 @@ services:
         value: medium
       - key: WHISPER_LANG
         value: ru
+      # Всё, что должно пережить передеплой, — на смонтированный диск.
+      - key: WHISPER_DIR
+        value: /app/data/whisper
+      - key: CONTENT_DIR
+        value: /app/data/content
+      - key: STATE_FILE
+        value: /app/data/content/.state.json
+      # Автопубликация работает в том же процессе, что и бот.
+      - key: PUBLISH_SCHEDULER_IN_BOT
+        value: "true"
+      - key: TIMEZONE
+        value: Europe/Moscow
+      # У воркера нет публичного домена, поэтому медиа для Instagram —
+      # через S3-совместимое хранилище (см. PUBLISH.md, шаг 3).
+      - key: MEDIA_HOST
+        value: s3
+      - key: S3_ENDPOINT
+        sync: false
+      - key: S3_BUCKET
+        sync: false
+      - key: S3_ACCESS_KEY_ID
+        sync: false
+      - key: S3_SECRET_ACCESS_KEY
+        sync: false
+      - key: IG_USER_ID
+        sync: false
+      - key: IG_ACCESS_TOKEN
+        sync: false
+      - key: VK_GROUP_ID
+        sync: false
+      - key: VK_ACCESS_TOKEN
+        sync: false
+      - key: NOTIFY_CHAT_ID
+        sync: false
     disk:
-      name: whisper-cache
-      mountPath: /app/.whisper
+      name: botdata
+      mountPath: /app/data # модель Whisper + контент + журнал публикаций
       sizeGB: 5

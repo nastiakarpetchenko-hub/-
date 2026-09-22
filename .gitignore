@@ -10,3 +10,9 @@ out
 .work
 .whisper
 .env
+
+# Контент и журнал публикаций
+content/plan.yaml
+content/media/*
+!content/media/.gitkeep
+content/.state.json
