@@ -47,7 +47,9 @@
     "publish:status": "tsx publish/index.ts status",
     "publish:scheduler": "tsx publish/index.ts scheduler",
     "publish:test": "tsx publish/selftest.ts",
-    "publish:cli": "tsx publish/index.ts"
+    "publish:cli": "tsx publish/index.ts",
+    "bot:test": "tsx bot/selftest.ts",
+    "test": "tsx publish/selftest.ts && tsx bot/selftest.ts"
   },
   "sideEffects": [
     "*.css"

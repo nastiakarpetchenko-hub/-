@@ -192,6 +192,83 @@ async function main() {
     );
   });
 
+  await test("время, написанное словами, понимается правильно", async () => {
+    const { parseHumanTime, formatHuman } = await import("./humanTime");
+    const tz = "Europe/Moscow";
+    // Опора — фиксированный момент: 22 сентября 2026, 12:00 по Москве.
+    const now = new Date("2026-09-22T09:00:00Z");
+
+    const iso = (v: Date | null) => v?.toISOString() ?? "null";
+    assert.equal(
+      iso(parseHumanTime("завтра в 10:00", tz, now)),
+      "2026-09-23T07:00:00.000Z",
+    );
+    assert.equal(
+      iso(parseHumanTime("завтра 9:30", tz, now)),
+      "2026-09-23T06:30:00.000Z",
+    );
+    assert.equal(
+      iso(parseHumanTime("сегодня 19:00", tz, now)),
+      "2026-09-22T16:00:00.000Z",
+    );
+    assert.equal(
+      iso(parseHumanTime("послезавтра 8:00", tz, now)),
+      "2026-09-24T05:00:00.000Z",
+    );
+    assert.equal(
+      iso(parseHumanTime("23.09 18:30", tz, now)),
+      "2026-09-23T15:30:00.000Z",
+    );
+    assert.equal(
+      iso(parseHumanTime("23.09.2027 18:30", tz, now)),
+      "2027-09-23T15:30:00.000Z",
+    );
+    assert.equal(
+      iso(parseHumanTime("через 3 часа", tz, now)),
+      "2026-09-22T12:00:00.000Z",
+    );
+    assert.equal(
+      iso(parseHumanTime("через 20 минут", tz, now)),
+      "2026-09-22T09:20:00.000Z",
+    );
+    assert.equal(
+      iso(parseHumanTime("2026-10-01 07:15", tz, now)),
+      "2026-10-01T04:15:00.000Z",
+    );
+
+    // «10:00» уже прошло сегодня → имеется в виду завтра.
+    assert.equal(
+      iso(parseHumanTime("10:00", tz, now)),
+      "2026-09-23T07:00:00.000Z",
+    );
+    // «20:00» ещё впереди → сегодня.
+    assert.equal(
+      iso(parseHumanTime("20:00", tz, now)),
+      "2026-09-22T17:00:00.000Z",
+    );
+    // Дата без года, которая уже прошла → следующий год.
+    assert.equal(
+      iso(parseHumanTime("01.03 09:00", tz, now)),
+      "2027-03-01T06:00:00.000Z",
+    );
+
+    assert.equal(parseHumanTime("когда-нибудь", tz, now), null);
+    assert.equal(parseHumanTime("25:00", tz, now), null);
+
+    assert.equal(
+      formatHuman(new Date("2026-09-23T07:00:00Z"), tz, now),
+      "завтра в 10:00",
+    );
+    assert.equal(
+      formatHuman(new Date("2026-09-22T16:00:00Z"), tz, now),
+      "сегодня в 19:00",
+    );
+    assert.equal(
+      formatHuman(new Date("2026-10-05T07:00:00Z"), tz, now),
+      "05.10 в 10:00",
+    );
+  });
+
   // ── 2. Проверки контент-плана ───────────────────────────────────────
   await test("план с ошибками не публикуется, ошибки описаны по-человечески", () => {
     writePlan(`
